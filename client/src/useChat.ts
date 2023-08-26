@@ -16,11 +16,12 @@ export const useChat = () => {
   const [messages, setMessages] = useState<IMessages[]>([]);
   const [loadingConnection, setLoadingConnection] = useState(false);
 
-  const sendMessage = (message: string) => {
+  const sendMessage = (message: string, username: string) => {
     socket.current?.emit("message", {
       id: v4(),
       text: message,
       createdAt: new Date(),
+      username,
     });
   };
 
@@ -41,7 +42,7 @@ export const useChat = () => {
 
     socket.current.on("message", (message) => {
       openSnackbar("Message received from the websocket server");
-      setMessages((messages) => [...messages, message]);
+      setMessages((messages) => [...messages, ...message]);
     });
 
     socket.current.on("error", (error) => {
@@ -56,5 +57,6 @@ export const useChat = () => {
     messages,
     sendMessage,
     loadingConnection,
+    openSnackbar,
   };
 };
